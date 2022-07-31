@@ -37,7 +37,7 @@ export default function App() {
 //     <View>
 //       <StatusBar style='dark' />
 //       <NavigationContainer>
-//         <Stack.Navigation>
+//         <Navigation>
 //           <Stack.Screen name='AllPlaces' component={AllPlaces} />
 //           <Stack.Screen name='AddPlace' component={AddPlace} />
 //         </Stack.Navigation>
