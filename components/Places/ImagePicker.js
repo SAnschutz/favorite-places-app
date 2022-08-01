@@ -1,7 +1,10 @@
-import {View, Button, Alert} from 'react-native';
+import {useState} from 'react'
+import {View, Button, Alert, Image, Text, StyleSheet} from 'react-native';
 import { launchCameraAsync, useCameraPermissions, PermissionStatus } from 'expo-image-picker'
+import { Colors } from '../../constants/colors';
 
 function ImagePicker (){
+    const [pickedImage, setPickedImage] = useState()
     const [cameraPermissionInformation, requestPermission] = useCameraPermissions()
 
     async function verifyPermissions(){
@@ -30,12 +33,18 @@ function ImagePicker (){
           aspect: [16, 9],
           quality: 0.5 //to not get really big images
       });
-      console.log(image)
+      setPickedImage(image.uri)
+    }
+
+    let imagePreview = <Text>No image</Text>
+
+    if (pickedImage) {
+        imagePreview = <Image style={styles.image} soure={{uri: pickedImage}}/>
     }
 
     return <View>
-        <View>
-
+        <View style={styles.imagePreview}> 
+{imagePreview}
         </View>
         <Button title="Take Image" onPress={takeImageHandler}/>
     </View>
@@ -43,6 +52,22 @@ function ImagePicker (){
 }
 
 export default ImagePicker;
+
+const styles = StyleSheet.create({
+    imagePreview: {
+        wdth: '100%',
+        height: 200,
+        marginVertical: 8,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: Colors.primary100,
+        borderRadius: 4
+    },
+    image: {
+        width: '100%',
+        height: '100%'
+    }
+})
 
 //expo Camera can use if need a more heavy-duty camera application.
 //expo ImagePicker provides access to the system UI for picking photos and also for opening the camera if necessary
