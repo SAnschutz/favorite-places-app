@@ -39,7 +39,7 @@ function ImagePicker (){
     let imagePreview = <Text>No image</Text>
 
     if (pickedImage) {
-        imagePreview = <Image style={styles.image} soure={{uri: pickedImage}}/>
+        imagePreview = <Image style={styles.image} source={{uri: pickedImage}}/>
     }
 
     return <View>
@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
     },
     image: {
         width: '100%',
-        height: '100%'
+        height: '100%',
     }
 })
 
