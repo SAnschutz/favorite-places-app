@@ -1,73 +1,87 @@
-import {useState} from 'react'
-import {View, Button, Alert, Image, Text, StyleSheet} from 'react-native';
-import { launchCameraAsync, useCameraPermissions, PermissionStatus } from 'expo-image-picker'
+import { useState } from 'react';
+import { View, Alert, Image, Text, StyleSheet } from 'react-native';
+import {
+  launchCameraAsync,
+  useCameraPermissions,
+  PermissionStatus,
+} from 'expo-image-picker';
 import { Colors } from '../../constants/colors';
+import OutlinedButton from '../UI/OutlinedButton';
 
-function ImagePicker (){
-    const [pickedImage, setPickedImage] = useState()
-    const [cameraPermissionInformation, requestPermission] = useCameraPermissions()
+function ImagePicker() {
+  const [pickedImage, setPickedImage] = useState();
+  const [cameraPermissionInformation, requestPermission] =
+    useCameraPermissions();
 
-    async function verifyPermissions(){
-        if (cameraPermissionInformation.status === PermissionStatus.UNDETERMINED){
-            const permissionResponse = await requestPermission();
-            return permissionResponse.granted;
-        }
-        if (cameraPermissionInformation.status === PermissionStatus.DENIED){
-            Alert.alert('Please grant app permission to use camera')
-            return false;
-        }
-
-        return true;
-
+  async function verifyPermissions() {
+    if (
+      cameraPermissionInformation.status ===
+      PermissionStatus.UNDETERMINED
+    ) {
+      const permissionResponse = await requestPermission();
+      return permissionResponse.granted;
+    }
+    if (
+      cameraPermissionInformation.status === PermissionStatus.DENIED
+    ) {
+      Alert.alert('Please grant app permission to use camera');
+      return false;
     }
 
-    async function takeImageHandler(){
-        const hasPermission = await verifyPermissions()
+    return true;
+  }
 
-        if (!hasPermission){
-            return;
-        }
+  async function takeImageHandler() {
+    const hasPermission = await verifyPermissions();
 
-      const image =  await launchCameraAsync({
-          allowsEditing: true,
-          aspect: [16, 9],
-          quality: 0.5 //to not get really big images
-      });
-      setPickedImage(image.uri)
+    if (!hasPermission) {
+      return;
     }
 
-    let imagePreview = <Text>No image</Text>
+    const image = await launchCameraAsync({
+      allowsEditing: true,
+      aspect: [16, 9],
+      quality: 0.5, //to not get really big images
+    });
+    setPickedImage(image.uri);
+  }
 
-    if (pickedImage) {
-        imagePreview = <Image style={styles.image} source={{uri: pickedImage}}/>
-    }
+  let imagePreview = <Text>No image</Text>;
 
-    return <View>
-        <View style={styles.imagePreview}> 
-{imagePreview}
-        </View>
-        <Button title="Take Image" onPress={takeImageHandler}/>
+  if (pickedImage) {
+    imagePreview = (
+      <Image style={styles.image} source={{ uri: pickedImage }} />
+    );
+  }
+
+  return (
+    <View>
+      <View style={styles.imagePreview}>{imagePreview}</View>
+      <OutlinedButton onPress={takeImageHandler} icon='camera'>
+        Take Image
+      </OutlinedButton>
     </View>
-
+  );
 }
 
 export default ImagePicker;
 
 const styles = StyleSheet.create({
-    imagePreview: {
-        wdth: '100%',
-        height: 200,
-        marginVertical: 8,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: Colors.primary100,
-        borderRadius: 4
-    },
-    image: {
-        width: '100%',
-        height: '100%',
-    }
-})
+  imagePreview: {
+    width: '100%',
+    height: 200,
+    marginVertical: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: Colors.primary100,
+    borderRadius: 4,
+  },
+  image: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 4,
+  },
+});
 
 //expo Camera can use if need a more heavy-duty camera application.
 //expo ImagePicker provides access to the system UI for picking photos and also for opening the camera if necessary
