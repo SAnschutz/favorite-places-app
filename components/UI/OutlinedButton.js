@@ -4,8 +4,7 @@ import { Colors } from '../../constants/colors';
 
 function OutlinedButton({ onPress, icon, children }) {
   return (
-    <Pressable
-      style={({ pressed }) => [
+    <Pressable style={({pressed} )=> [
         styles.button,
         pressed && styles.pressed,
       ]}

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { View, StyleSheet, Text, Image } from 'react-native';
 import {
   getCurrentPositionAsync,
@@ -14,7 +14,7 @@ function LocationPicker() {
   const navigation = useNavigation();
   const [locationPermissionInformation, requestPermission] =
     useForegroundPermissions();
-  const [pickedLocationCoordinates, setPickedLocationCoordinates] =
+  const [pickedLocation, setPickedLocation] =
     useState();
 
   async function verifyPermissions() {
@@ -44,7 +44,7 @@ function LocationPicker() {
     }
     const location = await getCurrentPositionAsync(); //can pass object to configure accuracy, interval for fetching, etc.
 
-    setPickedLocationCoordinates({
+    setPickedLocation({
       lat: location.coords.latitude,
       lng: location.coords.longitude,
     });
@@ -56,14 +56,14 @@ function LocationPicker() {
 
   let locationPreview = <Text>No location chosen</Text>;
 
-  if (pickedLocationCoordinates) {
+  if (pickedLocation) {
     locationPreview = (
       <Image
         style={styles.image}
         source={{
           url: getMapPreview(
-            pickedLocationCoordinates.lat,
-            pickedLocationCoordinates.lng
+            pickedLocation.lat,
+            pickedLocation.lng
           ),
         }}
       />
