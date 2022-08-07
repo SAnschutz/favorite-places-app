@@ -5,17 +5,39 @@ import {
   useForegroundPermissions,
   PermissionStatus,
 } from 'expo-location';
-import { useNavigation } from '@react-navigation/native';
+import {
+  useNavigation,
+  useRoute,
+  useIsFocused,
+} from '@react-navigation/native';
 import OutlinedButton from '../UI/OutlinedButton';
 import { Colors } from '../../constants/colors';
 import { getMapPreview } from '../../util/location';
 
-function LocationPicker() {
+function LocationPicker({ onPickLocation }) {
   const navigation = useNavigation();
+  const route = useRoute();
+  const isFocused = useIsFocused(); // returns true or false  Necessary
+  //use useIsFocused if you need to recreate the component when you go back to it (like with navigation) See RN Course lesson 206
+  //normally with stacks, if you go back to a component, it's already on the stack and is just moved into visibility -- not rerendered.
+  //if you need it to rerender when you go back to it (for example in this case to load the route params), use the useIsFocused hook
   const [locationPermissionInformation, requestPermission] =
     useForegroundPermissions();
-  const [pickedLocation, setPickedLocation] =
-    useState();
+  const [pickedLocation, setPickedLocation] = useState();
+
+  useEffect(() => {
+    if (isFocused && route.params) {
+      const mapPickedLocation = {
+        lat: route.params.pickedLat,
+        lng: route.params.pickedLng,
+      };
+      setPickedLocation(mapPickedLocation);
+    }
+  }, [route, isFocused]);
+
+  useEffect(() => {
+    onPickLocation(pickedLocation);
+  }, [pickedLocation, onPickLocation]);
 
   async function verifyPermissions() {
     if (
@@ -61,10 +83,7 @@ function LocationPicker() {
       <Image
         style={styles.image}
         source={{
-          url: getMapPreview(
-            pickedLocation.lat,
-            pickedLocation.lng
-          ),
+          url: getMapPreview(pickedLocation.lat, pickedLocation.lng),
         }}
       />
     );
