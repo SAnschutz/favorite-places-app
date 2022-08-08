@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { Text, View } from 'react-native';
+import { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import AllPlaces from './screens/AllPlaces';
@@ -7,10 +7,27 @@ import AddPlace from './screens/AddPlace';
 import Map from './screens/Map';
 import IconButton from './components/UI/IconButton';
 import { Colors } from './constants/colors';
+import { init } from './util/database';
+import AppLoading from 'expo-app-loading';
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
+  const [dbInitialized, setDbInitialized] = useState(false);
+  useEffect(() => {
+    init()
+      .then(() => {
+        setDbInitialized(true);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
+
+  if (!dbInitialized) {
+    return <AppLoading />;
+  }
+
   return (
     <>
       <StatusBar style='dark' />
@@ -51,35 +68,3 @@ export default function App() {
     </>
   );
 }
-
-// import { StatusBar } from 'expo-status-bar';
-// import { StyleSheet, Text, View } from 'react-native';
-// import { NavigationContainer } from '@react-navigation/native';
-// import { createNativeStackNavigator } from '@react-navigation/native-stack';
-// import AllPlaces from './screens/AllPlaces';
-// import AddPlace from './screens/AddPlace';
-
-// const Stack = createNativeStackNavigator();
-
-// export default function App() {
-//   return (
-//     <View>
-//       <StatusBar style='dark' />
-//       <NavigationContainer>
-//         <Navigation>
-//           <Stack.Screen name='AllPlaces' component={AllPlaces} />
-//           <Stack.Screen name='AddPlace' component={AddPlace} />
-//         </Stack.Navigation>
-//       </NavigationContainer>
-//     </View>
-//   );
-// }
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     backgroundColor: '#fff',
-//     alignItems: 'center',
-//     justifyContent: 'center',
-//   },
-// });
