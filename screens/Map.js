@@ -3,18 +3,27 @@ import { StyleSheet, Alert } from 'react-native';
 import { useState, useLayoutEffect, useCallback } from 'react';
 import IconButton from '../components/UI/IconButton';
 
-function Map({ navigation }) {
-  //any component that is registered as a screen recieves the navigation as a prop
-  const [selectedLocation, setSelectedLocation] = useState();
+function Map({ navigation, route }) {
+  const initialLocation = route.params && {
+    lat: route.params.initialLat,
+    lng: route.params.initialLng,
+  };
+  //any component that is registered as a screen receives the navigation as a prop
+  const [selectedLocation, setSelectedLocation] =
+    useState(initialLocation);
 
   const region = {
-    latitude: 37.78, //this defines the center of the map
-    longitude: -122.43,
+    latitude: initialLocation ? initialLocation.lat : 37.78, //this defines the center of the map
+    longitude: initialLocation ? initialLocation.lng : -122.43,
     latitudeDelta: 0.022, //this defines the zoom level (how much of the map is visible)
     longitudeDelta: 0.0421,
   };
 
   function selectLocationHandler(event) {
+    if (initialLocation) {
+      //so you can't set a new location
+      return;
+    }
     const lat = event.nativeEvent.coordinate.latitude;
     const lng = event.nativeEvent.coordinate.longitude;
     setSelectedLocation({ lat, lng });
@@ -36,6 +45,9 @@ function Map({ navigation }) {
   }, [navigation, selectedLocation]);
 
   useLayoutEffect(() => {
+    if (initialLocation) {
+      return;
+    }
     navigation.setOptions({
       headerRight: ({ tintColor }) => (
         <IconButton
@@ -46,7 +58,7 @@ function Map({ navigation }) {
         />
       ),
     });
-  }, [navigation, savePickedLocationHandler]);
+  }, [navigation, savePickedLocationHandler, initialLocation]);
 
   return (
     <MapView

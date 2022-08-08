@@ -6,7 +6,7 @@ function AddPlace({ navigation }) {
   //any component that's registered as a screen automatically gets navigation as a prop -- no need to import anything!
   async function createPlaceHandler(place) {
     await insertPlace(place);
-    navigation.navigate('AllPlaces', { place });
+    navigation.navigate('AllPlaces');
   }
   return <PlaceForm onCreatePlace={createPlaceHandler} />;
 }
